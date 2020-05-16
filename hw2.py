@@ -1,6 +1,3 @@
-import Olympics
-
-
 def printCompetitor(competitor):
     '''
     Given the data of a competitor, the function prints it in a specific format.
@@ -187,6 +184,7 @@ def partA(file_name='input.txt', allow_prints=True):
 
 def partB(file_name='input.txt'):
     competitions_results = partA(file_name, allow_prints=False)
+    import Olympics
     olympics = Olympics.OlympicsCreate()
 
     for champ in competitions_results:
