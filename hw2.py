@@ -61,9 +61,13 @@ def readParseData(file_name):
 
     with open(file_name, 'r') as input_file:
         for line in input_file:
+            if line[0] == '#':
+                continue
+
             entry_parts = line.strip().split(' ')
             if entry_parts[0] == 'competitor':
-                contries_by_competitor_ids[int(entry_parts[1])] = entry_parts[2]
+                contries_by_competitor_ids[int(
+                    entry_parts[1])] = entry_parts[2]
             else:
                 assert entry_parts[
                     0] == 'competition', f'Invalid line in input file:\n{line}'
@@ -117,6 +121,9 @@ def getValidEntriesByCompetition(competitors_in_competitions):
                                            'result': entry['result']
                                            })
 
+    entries_by_competition = {x: entries_by_competition[x] for x in entries_by_competition
+                              if entries_by_competition[x]['entries']}
+
     return entries_by_competition
 
 
@@ -142,7 +149,8 @@ def calcCompetitionsResults(competitors_in_competitions):
         if competition_info['type'] in ['knockout', 'timed']:
             reverse_results = False
         else:
-            assert competition_info['type'], f'Unknown competition type: {competition_info["type"]}'
+            assert competition_info[
+                'type'] == 'untimed', f'Unknown competition type: {competition_info["type"]}'
             reverse_results = True
 
         sorted_entries = sorted(competition_info['entries'], key=lambda x: x['result'],
@@ -176,7 +184,15 @@ def partA(file_name='input.txt', allow_prints=True):
 
 def partB(file_name='input.txt'):
     competitions_results = partA(file_name, allow_prints=False)
-    # TODO Part B
+    import Olympics
+    olympics = Olympics.OlympicsCreate()
+
+    for champ in competitions_results:
+        Olympics.OlympicsUpdateCompetitionResults(
+            olympics, str(champ[1]), str(champ[2]), str(champ[3]))
+
+    Olympics.OlympicsWinningCountry(olympics)
+    Olympics.OlympicsDestroy(olympics)
 
 
 if __name__ == "__main__":
